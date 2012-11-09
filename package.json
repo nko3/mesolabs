@@ -1,0 +1,19 @@
+{
+  "name": "nko3-mesolabs",
+  "version": "0.0.0",
+  "description": "mesolabs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nko3/mesolabs.git"
+  },
+  "dependencies": {
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "subdomain": "mesolabs.nko3"
+}
