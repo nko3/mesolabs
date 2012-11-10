@@ -15,8 +15,7 @@ io.sockets.on('connection', function(socket) {
   socket.broadcast.emit('new player', id);
 
   socket.on('location', function(location) {
-    socket.emit('location', location);
-    socket.broadcast.emit('location', location);
+    socket.volatile.broadcast.emit('location', location);
   });
 
   socket.on('disconnect', function() {

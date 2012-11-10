@@ -327,14 +327,57 @@ var start = function() {
       this.vy += this.ay + 2 ; // 2 is gravity
       this.vx = Math.min(Math.max(this.vx, -10), 10);
       this.vy = Math.min(Math.max(this.vy, -10), 10);
+//      var dest = new Rectangle(
+//        this.x + this.vx + 5, this.y + this.vy + 2,
+//        this.width-10, this.height-2
+//      );
       var dest = new Rectangle(
-        this.x + this.vx + 5, this.y + this.vy + 2,
-        this.width-10, this.height-2
+        this.x + this.vx + 5, this.y + this.vy + 2, // 左と上を削ってる
+        this.width-10, this.height-2 // 右と下を削ってる
       );
       this.jumping = true;
       if (dest.x < -stage.x) {
         dest.x = -stage.x;
         this.vx = 0;
+      }
+
+      {
+        var dx = dest.x - this.x - 5;
+        var dy = dest.y - this.y - 2;
+        for (var i in players) {
+          var p = players[i];
+          if (
+            (dest.x + dest.width - 5 < p.x + 5) || (p.x + 5 + p.width - 15 < dest.x) ||
+            (dest.y + dest.height - 5 < p.y - 2) || (p.y + p.height - 2 < dest.y)) {
+            // 他プレーヤーと接触してない
+          } else {
+            // 他プレーヤーと接触した
+            if ((this.x + 5 + this.width - 10 - 5 < p.x + 5) &&
+               !(dest.x + dest.width - 5 < p.x + 5)) {
+              // 左からあたった
+              dest.x = this.x + 5 - 1.5 * this.vx;
+              this.vx *= -0.3;
+            } else
+            if ((p.x + 5 + p.width - 15 < this.x + 5) &&
+               !(p.x + 5 + p.width - 15 < dest.x)) {
+              // 右からあたった
+              dest.x = this.x + 5 - 1.5 * this.vx;
+              this.vx *= -0.3;
+            }
+            if ((this.y + this.height - 10 < p.y - 2) &&
+               !(dest.y + dest.height - 10 < p.y - 2)) {
+              // 上からあたった
+              dest.y = this.y + 2 - 1.5 * this.vy;
+              this.vy = -0.3 * this.vy;
+            } else
+            if ((p.y + p.height - 2 < this.y) &&
+               !(p.y + p.height - 2 < dest.y)) {
+              // 下からあたった
+              dest.y = this.y + 2 - 1.5 * this.vy;
+              this.vy = -0.3 * this.vy;
+            }
+          }
+        }
       }
 
       {
@@ -346,6 +389,7 @@ var start = function() {
           crossing = (dest.right - boundary) / dx * dy + dest.y;
           if ((map.hitTest(boundary, crossing) && !map.hitTest(boundary-16, crossing)) ||
             (map.hitTest(boundary, crossing + dest.height) && !map.hitTest(boundary-16, crossing + dest.height))) {
+            // 右に進んで壁にあたった
             this.vx = 0;
             dest.x = boundary - dest.width - 0.01;
           }
@@ -354,6 +398,7 @@ var start = function() {
           crossing = (boundary - dest.x) / dx * dy + dest.y;
           if ((map.hitTest(boundary-16, crossing) && !map.hitTest(boundary, crossing)) ||
             (map.hitTest(boundary-16, crossing + dest.height) && !map.hitTest(boundary, crossing + dest.height))) {
+            // 左に進んで壁にあたった
             this.vx = 0;
             dest.x = boundary + 0.01;
           }
@@ -363,6 +408,7 @@ var start = function() {
           crossing = (dest.bottom - boundary) / dy * dx + dest.x;
           if ((map.hitTest(crossing, boundary) && !map.hitTest(crossing, boundary-16)) ||
             (map.hitTest(crossing + dest.width, boundary) && !map.hitTest(crossing + dest.width, boundary-16))) {
+            // 地面に着地した
             this.jumping = false;
             this.vy = 0;
             dest.y = boundary - dest.height - 0.01;
@@ -372,15 +418,17 @@ var start = function() {
           crossing = (boundary - dest.y) / dy * dx + dest.x;
           if ((map.hitTest(crossing, boundary-16) && !map.hitTest(crossing, boundary)) ||
             (map.hitTest(crossing + dest.width, boundary-16) && !map.hitTest(crossing + dest.width, boundary))) {
+            // 天井に頭ぶつけた
             this.vy = 0;
             dest.y = boundary + 0.01;
           }
         }
       }
+
       this.x = dest.x-5;
       this.y = dest.y-2;
 
-      if (game.frame % 2 == 0) {
+      if (game.frame % 1 == 0) {
         socket.emit('location', {id: this.id, x: this.x, y: this.y, scaleX: this.scaleX});
       }
 
@@ -396,6 +444,25 @@ var start = function() {
       if (myId == location.id) return;
       if (!players[location.id]) {
         players[location.id] = new Player(location.id);
+//        players[location.id].addEventListener(Event.ENTER_FRAME, function() {
+//          var vx = this.tx - this.x;
+//          var vy = this.ty - this.y;
+//
+//          len = Math.sqrt(Math.abs(vx * vx + vy * vy));
+//          if (len > 2) {
+//            vx = 4 * vx / len;
+//            vy = 4 * vy / len;
+//          }
+//          this.x += vx;
+//          this.y += vy;
+//
+//          if (vx == 0) return;
+//          if (vx >= 0) {
+//            this.scaleX = 1;
+//          } else {
+//            this.scaleX = -1;
+//          }
+//        });
         stage.addChild(players[location.id]);
       }
       players[location.id].x = location.x;
@@ -403,6 +470,10 @@ var start = function() {
       players[location.id].scaleX = location.scaleX;
     });
 
+    var pad = new Pad();
+    pad.x = 0;
+    pad.y = 224;
+    game.rootScene.addChild(pad);
     game.rootScene.addChild(stage);
     game.rootScene.backgroundColor = 'rgb(182, 255, 255)';
   };
