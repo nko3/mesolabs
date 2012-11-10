@@ -1,7 +1,25 @@
-var http = require('http');
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
-}).listen(8000);
+var connect = require('connect');
+var port = process.env.PORT || 3000;
 
-console.log('Server running at http://0.0.0.0:8000/');
+var app = connect()
+  .use(connect.static('public'))
+  .listen(port);
+
+var io = require('socket.io').listen(app);
+var id = 0;
+
+io.sockets.on('connection', function(socket) {
+  id++;
+  console.log("connected: " + id);
+  socket.emit('create', id);
+  socket.broadcast.emit('new player', id);
+
+  socket.on('location', function(location) {
+    socket.emit('location', location);
+    socket.broadcast.emit('location', location);
+  });
+
+  socket.on('disconnect', function() {
+    console.log("disconnected: " + id);
+  });
+});

@@ -11,6 +11,8 @@
     "url": "git@github.com:nko3/mesolabs.git"
   },
   "dependencies": {
+    "socket.io": "~0.9.11",
+    "connect": "~2.6.2"
   },
   "engines": {
     "node": "0.8.x"
