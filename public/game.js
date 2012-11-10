@@ -34,7 +34,6 @@ var Rectangle = enchant.Class.create({
 var start = function() {
   var players = [];
   var game = new Game(640, 320);
-  game.scale = 9;
   game.fps = 24;
   game.preload(MAP_DATA, KUMA);
   game.onload = function() {
@@ -531,7 +530,7 @@ var CenterLabel = Class.create(Label, {
   initialize: function(color) {
     Label.call(this);
 
-    this.width = 320;
+    this.width = 640;
     this._element.style.textAlign = "center";
 
     color = color || "white";
