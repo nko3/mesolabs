@@ -18,6 +18,10 @@ io.sockets.on('connection', function(socket) {
     socket.volatile.broadcast.emit('location', location);
   });
 
+  socket.on('delete', function(id) {
+    socket.broadcast.emit('delete', id);
+  });
+
   socket.on('disconnect', function() {
     socket.broadcast.emit('delete', id);
     console.log("disconnected: " + id);

@@ -6,7 +6,6 @@ var KUMA = 'images/chara1.png';
 
 var socket = io.connect();
 var myId = 0;
-var players = [];
 socket.on('create', function(id) {
   myId = id;
   console.log('myId: ' + myId);
@@ -33,6 +32,7 @@ var Rectangle = enchant.Class.create({
 });
 
 var start = function() {
+  var players = [];
   var game = new Game(320, 320);
   game.fps = 24;
   game.preload(MAP_DATA, KUMA);
@@ -516,6 +516,14 @@ var gameOver = function() {
   gameoverLabel.y = 150;
   gameoverLabel.text = "Game Over!!";
   scene.addChild(gameoverLabel);
+  var retryLabel = new CenterLabel("white");
+  retryLabel.y = 180;
+  retryLabel.text = "Press to Retry."
+  retryLabel.addEventListener(Event.TOUCH_START, function() {
+    socket.emit('delete', myId);
+    start();
+  });
+  scene.addChild(retryLabel);
 }
 
 var CenterLabel = Class.create(Label, {
