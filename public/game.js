@@ -33,7 +33,8 @@ var Rectangle = enchant.Class.create({
 
 var start = function() {
   var players = [];
-  var game = new Game(320, 320);
+  var game = new Game(640, 320);
+  game.scale = 9;
   game.fps = 24;
   game.preload(MAP_DATA, KUMA);
   game.onload = function() {
