@@ -472,6 +472,11 @@ var start = function() {
       players[location.id].scaleX = location.scaleX;
     });
 
+    socket.on('delete', function(id) {
+      stage.removeChild(players[id]);
+      delete players[id];
+    });
+
     var pad = new Pad();
     pad.x = 0;
     pad.y = 224;
