@@ -17,10 +17,10 @@ window.onload = function() {
     ];
 
     for (var i = 0; i < pos.length; i++) {
-      var mob = new PhyCircleSprite(8, box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.8, true);
-      var avatar = new AvatarMonster(game.assets(MOB1));
-      avatar.action = "run";
-      mob.image = avatar;
+      var mob = new PhyCircleSprite(8, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.8, true);
+//      var avatar = new AvatarMonster(game.assets[MOB1]);
+//      avatar.action = "run";
+      mob.image = game.assets[MOB1];
       mob.frame = i + 2;
       mob.position = pos[i];
       game.rootScene.addChild(mob);
