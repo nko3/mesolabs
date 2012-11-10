@@ -367,8 +367,10 @@ var start = function() {
             if ((this.y + this.height - 10 < p.y - 2) &&
                !(dest.y + dest.height - 10 < p.y - 2)) {
               // 上からあたった
-              dest.y = this.y + 2 - 1.5 * this.vy;
-              this.vy = -0.3 * this.vy;
+              dest.y = this.y + 2;
+              this.vy = 0;
+              this.jumpBoost = 5;
+              this.ay = -5;
             } else
             if ((p.y + p.height - 2 < this.y) &&
                !(p.y + p.height - 2 < dest.y)) {
@@ -428,7 +430,7 @@ var start = function() {
       this.x = dest.x-5;
       this.y = dest.y-2;
 
-      if (game.frame % 1 == 0) {
+      if (game.frame % 2 == 0) {
         socket.emit('location', {id: this.id, x: this.x, y: this.y, scaleX: this.scaleX});
       }
 
