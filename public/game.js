@@ -266,10 +266,7 @@ var start = function() {
             dest.y = boundary + 0.01;
           }
         }
-        
-        if (map.checkTile(Math.floor(dest.right / 16) * 16, Math.floor(dest.y / 16) * 16 + 32) == 9) {
-          gameClear();
-        }
+
       }
 
       this.x = dest.x-5;
@@ -279,6 +276,10 @@ var start = function() {
         socket.emit('location', {id: this.id, x: this.x, y: this.y, scaleX: this.scaleX});
       }
 
+      if (map.checkTile(Math.floor(this.x / 16) * 16 + 16, Math.floor(this.y / 16) * 16 + 40) == 9) {
+        gameClear();
+        return;
+      }
       if (this.y > 900) {
         this.frame = 3;
         this.removeEventListener('enterframe', arguments.callee);
