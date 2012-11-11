@@ -1,6 +1,6 @@
 {
   "name": "nko3-mesolabs",
-  "version": "0.0.0-10",
+  "version": "0.0.0-11",
   "description": "mesolabs",
   "main": "server.js",
   "scripts": {

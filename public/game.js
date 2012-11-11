@@ -345,7 +345,7 @@ var gameClear = function() {
   scene.addChild(gameclearLabel);
   var gameclearLabel2 = new CenterLabel("white");
   gameclearLabel2.y = 180;
-  gameclearLabel2.text = "You have a good friend, aren't you?";
+  gameclearLabel2.text = "You have a good friend, don't you?";
   scene.addChild(gameclearLabel2);
   var retryLabel = new CenterLabel("white");
   retryLabel.y = 210;
