@@ -315,10 +315,18 @@ var start = function() {
     game.rootScene.addChild(pad);
     game.rootScene.addChild(stage);
     game.rootScene.backgroundColor = 'rgb(182, 255, 255)';
-
-    document.body.onkeypress = function(event) {
-      var keycode = event.keyCode;
-      var key = event.which;
+    document.onkeydown = function(event) {
+      var key = event.which || event.keyCode;
+      if (key == 8) {
+        if (player.chatLabel) {
+          player.chatLabel.text =
+            player.chatLabel.text.slice(0, player.chatLabel.text.length - 1);
+        }
+        return false;
+      }
+    }
+    document.onkeypress = function(event) {
+      var key = event.which || event.keyCode;
       var keychar = String.fromCharCode(key);
 
       if (key == 13) {
@@ -335,6 +343,19 @@ var start = function() {
       }
       return false;
     };
+    game.keybind(32, "space");
+    game.addEventListener("spacebuttondown", function() {
+      if (player.chatLabel) {
+        player.chatLabel.text += " ";
+      }
+    });
+    var usage1 = new Label("Use arrow keys to move.");
+    usage1.y = 16;
+    var usage2 = new Label("Use alphabetic keys and press Enter to chat with others.");
+    usage2.width = 400;
+    usage2.y = 32;
+    stage.addChild(usage1);
+    stage.addChild(usage2);
   };
   game.start();
 };
