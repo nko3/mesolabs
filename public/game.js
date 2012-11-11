@@ -8,7 +8,6 @@ var socket = io.connect();
 var myId = 0;
 socket.on('create', function(id) {
   myId = id;
-  console.log('myId: ' + myId);
   start();
 });
 
@@ -304,12 +303,38 @@ var start = function() {
       delete players[id];
     });
 
+    socket.on('chat', function(chat) {
+      var chatLabel = new ChatLabel(chat.x, chat.y, chat.text);
+      chatLabel.received();
+      stage.addChild(chatLabel);
+    });
+
     var pad = new Pad();
     pad.x = 0;
     pad.y = 224;
     game.rootScene.addChild(pad);
     game.rootScene.addChild(stage);
     game.rootScene.backgroundColor = 'rgb(182, 255, 255)';
+
+    document.body.onkeypress = function(event) {
+      var keycode = event.keyCode;
+      var key = event.which;
+      var keychar = String.fromCharCode(key);
+
+      if (key == 13) {
+        if (player.chatLabel) {
+          player.chatLabel.start();
+          player.chatLabel = null;
+        }
+      } else
+      if (player.chatLabel) {
+        player.chatLabel.text += keychar;
+      } else {
+        player.chatLabel = new ChatLabel(player.x, player.y - 16, keychar);
+        stage.addChild(player.chatLabel);
+      }
+      return false;
+    };
   };
   game.start();
 };
@@ -387,5 +412,36 @@ var CenterLabel = Class.create(Label, {
 
     color = color || "white";
     this.color = color;
+  }
+});
+
+var ChatLabel = Class.create(Label, {
+  initialize: function(x, y, text) {
+    Label.call(this);
+    this.x = x;
+    this.y = y;
+    this.vy = 1;
+    this.ay = 0.03;
+    this.color = "black";
+    this.text = text;
+    this.started = false;
+
+    this.addEventListener(Event.ENTER_FRAME, function() {
+      if (this.started) {
+        this.vy += this.vy * this.ay;
+        this.y -= this.vy;
+        if (this.y < 0) {
+          this.removeEventListener(Event.ENTER_FRAME, arguments.callee);
+          this.parentNode.removeChild(this);
+        }
+      }
+    });
+  },
+  start: function() {
+    socket.emit('chat', {x: this.x, y: this.y, text: this.text});
+    this.started = true;
+  },
+  received: function() {
+    this.started = true;
   }
 });

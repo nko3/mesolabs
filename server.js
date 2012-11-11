@@ -18,6 +18,10 @@ io.sockets.on('connection', function(socket) {
     socket.volatile.broadcast.emit('location', location);
   });
 
+  socket.on('chat', function(chat) {
+    socket.broadcast.emit('chat', chat);
+  });
+
   socket.on('delete', function(id) {
     socket.broadcast.emit('delete', id);
   });
